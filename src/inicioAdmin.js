@@ -531,7 +531,7 @@ export default class entrar extends React.Component {
                           top: 20
                         }} >
                       <button id='prevPag' className="btn btn-success" disabled>
-                          {`<ANTERIOR`}
+                          {`< ANTERIOR`}
                       </button>
                     </div>
                     </div>
