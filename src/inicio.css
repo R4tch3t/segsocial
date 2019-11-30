@@ -1,4 +1,4 @@
-.App {
+.inicio {
   text-align: center;
 }
 
@@ -6,13 +6,13 @@
   height: 40vmin;
 }
 
-.App-header {
+.inicio-header {
   background-color: #0b214e;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   font-size: calc(10px + 2vmin);
   color: white;
 }
