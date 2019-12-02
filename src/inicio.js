@@ -319,8 +319,10 @@ export default class entrar extends React.Component {
               this.obtenerQ(idUsuario,'')
               if (`${r[0].idRol}` === `1`){
                 const tUser = document.getElementById('tUser')
+                const tUserB = document.getElementById('tUserB')
                 const children = document.createElement("a")
                 const dropDiv = document.createElement('div')
+                tUserB.classList.add('dropdown-toggle')
                 dropDiv.className = 'dropdown-menu'
                 children.innerHTML = 'Administrador'
                 children.className = 'dropdown-item'
@@ -426,7 +428,7 @@ export default class entrar extends React.Component {
                       >
                         <img src={userI} width='30' height='30' />
                         {' '}<div id='tUser' className="dropdown" style={{display: 'inline-block'}} >
-                          <button type="button" className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                          <button id='tUserB' type="button" className="btn btn-primary" data-toggle="dropdown">
                             Usuario
                           </button>
                         </div> 
@@ -444,7 +446,7 @@ export default class entrar extends React.Component {
                         }}
                       >
                         <button className="btn btn-danger" onClick={this.salir}>
-                          SALIR
+                          Salir
                         </button>
                       </div>
                     </div>
@@ -496,7 +498,7 @@ export default class entrar extends React.Component {
                       >
                         <div className="dropdown">
                           <button id='quincenasB' type="button" className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                            QUINCENAS
+                            Quincenas
                           </button>
                           < div id='quincenas' ref={this.quincenas} className = "dropdown-menu" >
                           </div>
@@ -529,7 +531,7 @@ export default class entrar extends React.Component {
                           top: 20
                         }} >
                       <button id='nextPag' className="btn btn-success" disabled>
-                         {`SIGUIENTE >`}
+                         {`Siguiente >`}
                       </button>
                     </div>
                     <div style={{
@@ -538,7 +540,7 @@ export default class entrar extends React.Component {
                           top: 20
                         }} >
                       <button id='prevPag' className="btn btn-success" disabled>
-                          {`< ANTERIOR`}
+                          {`< Anterior`}
                       </button>
                     </div>
                     </div>
