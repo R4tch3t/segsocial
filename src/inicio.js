@@ -319,12 +319,15 @@ export default class entrar extends React.Component {
               this.obtenerQ(idUsuario,'')
               if (`${r[0].idRol}` === `1`){
                 const tUser = document.getElementById('tUser')
-                const children = document.createElement("a");
+                const children = document.createElement("a")
+                const dropDiv = document.createElement('div')
+                dropDiv.className = 'dropdown-menu'
                 children.innerHTML = 'Administrador'
                 children.className = 'dropdown-item'
                 children.id = 'Administrador'
                 children.href = '/inicioAdmin'
-                tUser.appendChild(children)
+                dropDiv.appendChild(children)
+                tUser.appendChild(dropDiv)
               }
             } else if (r.error.name === "error01") {
               this.removeCookies()
@@ -422,12 +425,10 @@ export default class entrar extends React.Component {
                         }}
                       >
                         <img src={userI} width='30' height='30' />
-                        {' '}<div className="dropdown" style={{display: 'inline-block'}} >
+                        {' '}<div id='tUser' className="dropdown" style={{display: 'inline-block'}} >
                           <button type="button" className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                             Usuario
                           </button>
-                          <div id='tUser' className="dropdown-menu">
-                          </div>
                         </div> 
 
                       </div>
