@@ -1,20 +1,26 @@
 import React from 'react';
 import {Helmet} from "react-helmet";
 import { BrowserRouter, Route, Switch, Redirect, Link } from "react-router-dom";
-import logo from './logo.svg';
+import cookie from "react-cookies";
 import { confirmAlert } from "react-confirm-alert"; // Import
 import "react-confirm-alert/src/react-confirm-alert.css"; 
 
 
 export default class registro extends React.Component {
-  constructor(){
-    super()
+  constructor(props){
+    super(props)
     this.nombre = React.createRef()
     this.correo = React.createRef()
     this.edad = React.createRef()
     this.pass = React.createRef()
+    this.newPass = React.createRef()
     this.CVE_ID = React.createRef()
     this.regB = React.createRef()
+
+    if (cookie.load("pass") === undefined || cookie.load("pass") === null) {
+      this.removeCookies();
+      this.props.history.push("/");
+    }
   } 
   
   obtenerEdad = (str) => {
@@ -30,7 +36,7 @@ export default class registro extends React.Component {
   }
 
   validarDatos = ()=>{
-
+    const cookiePass = cookie.load("pass")
     const correo = this.correo.current.value.toLowerCase()
     const splitA = correo.split("@")
     if (splitA.length > 1) {
@@ -39,17 +45,34 @@ export default class registro extends React.Component {
       this.nombre.current.value !== '' &&
       this.correo.current.value !== '' &&
       this.edad.current.value !== '' &&
-      this.pass.current.value !== '' &&
+      this.pass.current.value === cookiePass &&
       !isNaN(this.edad.current.value) &&
       splitB[1] === "com") {
         this.regB.current.disabled = false
-        this.regB.current.onmouseup = this.registrar
+        this.regB.current.onmouseup = this.actualizar
       }else{
         this.regB.current.disabled = true
       }
     }
   }
 
+  removeCookies() {
+    cookie.remove("idUsuario");
+    cookie.remove("nombre");
+    cookie.remove("correo");
+    cookie.remove("edad");
+    cookie.remove("idRol");
+    cookie.remove("pass");
+  }
+
+  saveCookies(idUsuario, nombre, correo, edad, idRol, pass) {
+        cookie.save("idUsuario", idUsuario, { path: "/" });
+        cookie.save("nombre", nombre, { path: "/" });
+        cookie.save("correo", correo, { path: "/" });
+        cookie.save("edad", edad, { path: "/" });
+        cookie.save("idRol", idRol, { path: "/" });
+        cookie.save("pass", pass, { path: "/" });
+    }
 
   getinfoReg = async() => {
     try{
@@ -81,18 +104,18 @@ export default class registro extends React.Component {
     }
   }
 
-  registrar = async () => {
+  actualizar = async () => {
     try {
     // console.log(this.nombre)
     //  console.log(this.nombre.current.value)
 
         //const sendUri = 'http://35.239.230.74:3010/'
-        const sendUri = 'http://localhost:3011/'
+        const sendUri = 'http://localhost:3016/'
         const CVE_ID = this.CVE_ID.current.value
         const nombre = this.nombre.current.value
         const correo = this.correo.current.value
         const edad = this.edad.current.value
-        const pass = this.pass.current.value
+        const pass = this.newPass.current.value
         
         const bodyJSON = {
           idUsuario: CVE_ID,
@@ -112,16 +135,17 @@ export default class registro extends React.Component {
         })
         const responseJson = await response.json().then(r => {
           //console.log(`Response1: ${r}`)
-          if(r[0]!==undefined&&r[0].correo===correo){
-          
+          if(r[0]!==undefined&&`${r[0].idUsuario}`===`${CVE_ID}`){
+          this.removeCookies()
+          this.saveCookies(CVE_ID, r[0].nombre, r[0].correo, r[0].edad, r[0].idRol, r[0].pass)
           confirmAlert({
-            title: "Registro con éxito",
-            message: "El usuario se ha registrado con éxito.",
+            title: "Edición con éxito",
+            message: "El usuario se ha actualizado con éxito.",
             buttons: [
               {
                 label: "Aceptar",
                 onClick: () => {
-                  this.props.history.push('/entrar')
+                  this.props.history.push('/')
                 }
               }
               
@@ -131,7 +155,7 @@ export default class registro extends React.Component {
           } else if (r.error.name === 'error01') {
             confirmAlert({
               title: "¡Error!",
-              message: "N° de empleado ya éxiste.",
+              message: "N° de empleado NO éxiste.",
               buttons: [{
                 label: "Aceptar",
                 onClick: () => {
@@ -139,18 +163,7 @@ export default class registro extends React.Component {
                 }
               }]
             });
-          } else if (r.error.name === 'error02') {
-            confirmAlert({
-              title: "¡Error!",
-              message: "Empleado no encontrado.",
-              buttons: [{
-                label: "Aceptar",
-                onClick: () => {
-                  //  this.props.history.push("/entrar");
-                }
-              }]
-            });
-          }
+          } 
         })
         
 
@@ -160,15 +173,19 @@ export default class registro extends React.Component {
 };
 
   render(){
+    const idUsuario = cookie.load("idUsuario")
+    const nombre = cookie.load("nombre")
+    const correo = cookie.load("correo")
+    const edad = cookie.load("edad")
             return (
               <>
                 <Helmet>
-                  <title>Registro de usuarios</title>
+                  <title>Actualizar registro</title>
                   <meta name="description" content="Helmet application" />
                 </Helmet>
                 <div className="App">
                   <header className="App-header">
-                    <h1> REGISTRO DE USUARIOS </h1>
+                    <h1> EDITAR DATOS </h1>
 
                     <div
                       style={{
@@ -184,9 +201,7 @@ export default class registro extends React.Component {
                             <tr>
                               <td style={{ textAlign: "left" }}>N° de empleado:</td>
                               <td>
-                                <input ref={this.CVE_ID} type="number" onKeyUp = {this.getinfoReg} 
-                                onMouseUp = {this.getinfoReg}
-                                />
+                                <input ref={this.CVE_ID} type="number" defaultValue={idUsuario} readOnly />
                               </td>
                             </tr>
                             <tr>
@@ -195,7 +210,7 @@ export default class registro extends React.Component {
                                 <input ref={this.nombre} 
                                 onKeyUp = {this.validarDatos}
                                 onMouseUp = {this.validarDatos}
-                                type="text" />
+                                type="text" defaultValue={nombre} />
                               </td>
                             </tr>
                             <tr>
@@ -204,7 +219,7 @@ export default class registro extends React.Component {
                                 <input ref={this.correo}
                                 onKeyUp = {this.validarDatos}
                                 onMouseUp = {this.validarDatos}
-                                type="text" />
+                                type="text" defaultValue={correo} />
                               </td>
                             </tr>
                             <tr>
@@ -213,13 +228,22 @@ export default class registro extends React.Component {
                                 <input ref={this.edad}
                                 onKeyUp = {this.validarDatos}
                                 onMouseUp = {this.validarDatos}
-                                type="number" />
+                                type="number" defaultValue={edad} />
                               </td>
                             </tr>
                             <tr>
                               <td style={{ textAlign: "left" }}>Contraseña:</td>
                               <td>
                                 <input ref={this.pass}
+                                onKeyUp = {this.validarDatos}
+                                onMouseUp = {this.validarDatos}
+                                type="password" />
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ textAlign: "left" }}>Nueva contraseña:</td>
+                              <td>
+                                <input ref={this.newPass}
                                 onKeyUp = {this.validarDatos}
                                 onMouseUp = {this.validarDatos}
                                 type="password" />
@@ -246,9 +270,9 @@ export default class registro extends React.Component {
                           }}
                         >
                           <button ref={this.regB}
-                          className="btn btn-primary"
-                          onMouseUp={this.registrar} 
-                          disabled>REGISTRAR</button>
+                          className="btn btn-success"
+                          onMouseUp={this.actualizar} 
+                          disabled>ACTUALIZAR</button>
                         </div>
 
                         <div
@@ -259,8 +283,8 @@ export default class registro extends React.Component {
                             justifyContent: "flex-end"
                           }}
                         >
-                          <Link to="/entrar" className="link">
-                            <button className="btn btn-danger">CANCELAR</button>
+                          <Link to="/" className="link">
+                            <button className="btn btn-danger" onClick={this.cancelar} >CANCELAR</button>
                           </Link>
                         </div>
                       </div>

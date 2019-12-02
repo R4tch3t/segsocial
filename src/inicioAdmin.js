@@ -11,14 +11,15 @@ import search from './icons/search.png';
 
 
 export default class entrar extends React.Component {
-  /*state = {
+  state = {
     idUsuario: null,
     idQuincena: '',
     nombre: null,
     correo: null,
+    edad: null,
     idRol: null,
     pass: null
-  }*/
+  }
   page = []
   pageC=0
   trTotal = null
@@ -27,7 +28,7 @@ export default class entrar extends React.Component {
     this.nombre = React.createRef()
     this.pass = React.createRef()
     this.quincenas = React.createRef()
-    if (cookie.load("pass") !== undefined && `${cookie.load("idRol")}` === `1`) {
+    if (cookie.load("pass") !== undefined && cookie.load("pass") !== null && `${cookie.load("idRol")}` === `1`) {
       this.state = { 
         idUsuario: cookie.load("idUsuario"),
         idQuincena: '', 
@@ -41,8 +42,8 @@ export default class entrar extends React.Component {
       
       this.comprobarU(idUsuario, pass);
     } else {
-      this.props.history.push("/");
       this.removeCookies();
+      this.props.history.push("/");
     }
 
   } 
@@ -55,6 +56,7 @@ export default class entrar extends React.Component {
     cookie.remove("idUsuario");
     cookie.remove("nombre");
     cookie.remove("correo");
+    cookie.remove("edad");
     cookie.remove("idRol");
     cookie.remove("pass");
   }
@@ -115,6 +117,12 @@ export default class entrar extends React.Component {
       const td5 = document.createElement("td");
       th.scope = 'row'
       td2.style.textAlign = 'left'
+      th.style.verticalAlign = 'middle'
+      td1.style.verticalAlign = 'middle'
+      td2.style.verticalAlign = 'middle'
+      td3.style.verticalAlign = 'middle'
+      td4.style.verticalAlign = 'middle'
+      td5.style.verticalAlign = 'middle'
       th.innerHTML = (i+1)
       td1.innerHTML = e.idEmpleado
       td2.innerHTML = e.NOMBRE
@@ -372,7 +380,7 @@ export default class entrar extends React.Component {
 
   reloadQ = () =>{
     const qb = document.getElementById("quincenasB")
-    qb.innerHTML = 'QUINCENAS'
+    qb.innerHTML = 'Quincenas'
     document.getElementById("nEmpleado").value = '';
     document.getElementById('spinnerL').style.opacity = 1
     this.setState({idQuincena: ''})
@@ -388,6 +396,14 @@ export default class entrar extends React.Component {
     }
   };
 
+  editar = () => {
+    try {
+      this.props.history.push("/editar")
+    } catch (e) {
+      console.log(`Error: ${e}`)
+    }
+  };
+
   render(){
     const { idUsuario } = this.state;
     const { nombre } = this.state;
@@ -397,9 +413,7 @@ export default class entrar extends React.Component {
                 <Helmet>
                   <title>Seguridad social</title>
                   <meta name="description" content="Helmet application" />
-                  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-                  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-                  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+                  
                 </Helmet>
                 <div className="inicio">
                   <header className="inicio-header">
@@ -422,7 +436,16 @@ export default class entrar extends React.Component {
                           top: 25
                         }}
                       >
-                        <img src={userI} width='30' height='30' /> Administrador
+                        <img src={userI} width='30' height='30' /> 
+                        {' '}<div className="dropdown" style={{display: 'inline-block'}} >
+                          <button type="button" className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                            Administrador
+                          </button>
+                          <div className="dropdown-menu">
+                            <a className="dropdown-item" href="/inicio">Usuario</a>
+                          </div>
+                        </div>
+                         
                       </div>
                       <div
                         style={{
@@ -436,7 +459,7 @@ export default class entrar extends React.Component {
                         }}
                       >
                         <button className="btn btn-danger" onClick={this.salir}>
-                          SALIR
+                          Salir
                         </button>
                       </div>
                     </div>
@@ -455,6 +478,14 @@ export default class entrar extends React.Component {
                         <tr>
                           <th scope="row">Correo:</th>
                           <td>{correo}</td>
+                        </tr>
+                        <tr>
+                          <th scope="row"></th>
+                          <td>
+                            <button id='editar' onClick = {this.editar} className="btn btn-info" >
+                              {`Editar`}
+                            </button>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -480,7 +511,7 @@ export default class entrar extends React.Component {
                       >
                         <div className="dropdown">
                           <button id='quincenasB' type="button" className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                            QUINCENAS
+                            Quincenas
                           </button>
                           < div id='quincenas' ref={this.quincenas} className = "dropdown-menu" >
                           </div>
@@ -497,8 +528,8 @@ export default class entrar extends React.Component {
                       </button>
                       </div>
                       <div>
-                        <input id='nEmpleado' type="text" placeholder="N° de empleado" style={{height: 40, borderRadius: 5}} />
-                        <button className="btn btn-info" onClick={this.searchQ}>
+                        <input id='nEmpleado' type="number" placeholder="N° de empleado" style={{height: 40, borderRadius: 5}} />
+                        <button className="btn btn-info" style={{marginTop: -5}} onClick={this.searchQ}>
                             <img src={search} width='30' height='30' />
                         </button>
                       </div>
@@ -522,7 +553,7 @@ export default class entrar extends React.Component {
                           top: 20
                         }} >
                       <button id='nextPag' className="btn btn-success" disabled>
-                         {`SIGUIENTE >`}
+                         {`Siguiente >`}
                       </button>
                     </div>
                     <div style={{
@@ -531,7 +562,7 @@ export default class entrar extends React.Component {
                           top: 20
                         }} >
                       <button id='prevPag' className="btn btn-success" disabled>
-                          {`< ANTERIOR`}
+                          {`< Anterior`}
                       </button>
                     </div>
                     </div>
@@ -549,8 +580,8 @@ export default class entrar extends React.Component {
                             <th colSpan="2" style={{verticalAlign: 'middle' }} >DESCUENTO</th>
                           </tr>
                           <tr>
-                            <th scope="row">CREDITO FOVISSTE</th>
-                            <th scope="row">SEGURO DE DAÑOS FOVISSTE</th>
+                            <th scope="row" style={{verticalAlign: 'middle' }} >CREDITO FOVISSTE</th>
+                            <th scope="row" style={{verticalAlign: 'middle' }} >SEGURO DE DAÑOS FOVISSTE</th>
                           </tr>
                         </thead>
                         <tbody id='tbodyQ' >

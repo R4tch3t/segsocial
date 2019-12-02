@@ -15,17 +15,23 @@ export default class entrar extends React.Component {
           cookie.load("nombre"),
           cookie.load("pass")
         );*/
-        this.props.history.push("/inicio");
+        const idRol = cookie.load("idRol")
+        if (idRol === "0") {
+          this.props.history.push("/inicio");
+        } else if (idRol === "1") {
+          this.props.history.push("/inicioAdmin");
+        }
       }
       this.idUsuario = React.createRef();
       this.pass = React.createRef();
       
     }
     
-    saveCookies(idUsuario, nombre, correo, idRol, pass) {
+    saveCookies(idUsuario, nombre, correo, edad, idRol, pass) {
         cookie.save("idUsuario", idUsuario, { path: "/" });
         cookie.save("nombre", nombre, { path: "/" });
         cookie.save("correo", correo, { path: "/" });
+        cookie.save("edad", edad, { path: "/" });
         cookie.save("idRol", idRol, { path: "/" });
         cookie.save("pass", pass, { path: "/" });
     }
@@ -71,7 +77,7 @@ export default class entrar extends React.Component {
             //cookie.save("pass", pass, { path: "/" });
             // cookie.save("pass", pass, { path: "/entrar" });
             
-            this.saveCookies(idUsuario, r[0].nombre, r[0].correo, r[0].idRol, pass)
+            this.saveCookies(idUsuario, r[0].nombre, r[0].correo, r[0].edad, r[0].idRol, pass)
             if(r[0].idRol===0){
               this.props.history.push("/inicio");
             }else if(r[0].idRol===1){

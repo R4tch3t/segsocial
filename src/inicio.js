@@ -10,12 +10,14 @@ import reload from './icons/ios-refresh.svg';
 
 
 export default class entrar extends React.Component {
-  /*state = {
+  state = {
     idUsuario: null,
     nombre: null,
     correo: null,
+    edad: null,
+    idRol: null,
     pass: null
-  }*/
+  }
 
   page = []
   pageC = 0
@@ -26,7 +28,8 @@ export default class entrar extends React.Component {
     this.nombre = React.createRef()
     this.pass = React.createRef()
     this.quincenas = React.createRef()
-    if (cookie.load("pass") !== undefined) {
+    
+    if (cookie.load("pass") !== undefined && cookie.load("pass") !== null) {
       this.state = { 
         idUsuario: cookie.load("idUsuario"), 
         nombre: cookie.load("nombre"),
@@ -38,8 +41,9 @@ export default class entrar extends React.Component {
       
       this.comprobarU(idUsuario, pass);
     } else {
-      this.props.history.push("/");
       this.removeCookies();
+      this.props.history.push("/");
+      
     }
 
   } 
@@ -53,6 +57,7 @@ export default class entrar extends React.Component {
     cookie.remove("idUsuario");
     cookie.remove("nombre");
     cookie.remove("correo");
+    cookie.remove("edad");
     cookie.remove("idRol");
     cookie.remove("pass");
   }
@@ -104,6 +109,10 @@ export default class entrar extends React.Component {
       th.scope = 'row'
       //td2.style.textAlign = 'left'
       th.innerHTML = (i + 1)
+      th.style.verticalAlign = 'middle'
+      td1.style.verticalAlign = 'middle'
+      td2.style.verticalAlign = 'middle'
+      td3.style.verticalAlign = 'middle'
       //td1.innerHTML = e.idEmpleado
       //td2.innerHTML = e.NOMBRE
       td1.innerHTML = e.descripcion
@@ -306,9 +315,17 @@ export default class entrar extends React.Component {
               r[0] !== undefined &&
               (`${r[0].idUsuario}` === `${idUsuario}`)
             ) {
-              
+
               this.obtenerQ(idUsuario,'')
-           
+              if (`${r[0].idRol}` === `1`){
+                const tUser = document.getElementById('tUser')
+                const children = document.createElement("a");
+                children.innerHTML = 'Administrador'
+                children.className = 'dropdown-item'
+                children.id = 'Administrador'
+                children.href = '/inicioAdmin'
+                tUser.appendChild(children)
+              }
             } else if (r.error.name === "error01") {
               this.removeCookies()
               confirmAlert({
@@ -365,6 +382,14 @@ export default class entrar extends React.Component {
     }
   };
 
+  editar = () => {
+    try {
+      this.props.history.push("/editar")
+    } catch (e) {
+      console.log(`Error: ${e}`)
+    }
+  };
+
   render(){
     const { idUsuario } = this.state;
     const { nombre } = this.state;
@@ -374,9 +399,6 @@ export default class entrar extends React.Component {
                 <Helmet>
                   <title>Seguridad social</title>
                   <meta name="description" content="Helmet application" />
-                  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-                  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-                  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
                 </Helmet>
                 <div className="inicio">
                   <header className="inicio-header">
@@ -399,7 +421,15 @@ export default class entrar extends React.Component {
                           top: 25
                         }}
                       >
-                        <img src={userI} width='30' height='30' /> Usuario
+                        <img src={userI} width='30' height='30' />
+                        {' '}<div className="dropdown" style={{display: 'inline-block'}} >
+                          <button type="button" className="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                            Usuario
+                          </button>
+                          <div id='tUser' className="dropdown-menu">
+                          </div>
+                        </div> 
+
                       </div>
                       <div
                         style={{
@@ -432,6 +462,14 @@ export default class entrar extends React.Component {
                         <tr>
                           <th scope="row">Correo:</th>
                           <td>{correo}</td>
+                        </tr>
+                        <tr>
+                          <th scope="row"></th>
+                          <td>
+                            <button id='editar' onClick = {this.editar} className="btn btn-info" >
+                              {`Editar`}
+                            </button>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -515,8 +553,8 @@ export default class entrar extends React.Component {
                             <th colSpan="2" style={{verticalAlign: 'middle' }} >DESCUENTO</th>
                           </tr>
                           <tr>
-                            <th scope="row">CREDITO FOVISSTE</th>
-                            <th scope="row">SEGURO DE DAÑOS FOVISSTE</th>
+                            <th scope="row" style={{verticalAlign: 'middle' }} >CREDITO FOVISSTE</th>
+                            <th scope="row" style={{verticalAlign: 'middle' }} >SEGURO DE DAÑOS FOVISSTE</th>
                           </tr>
                         </thead>
                         <tbody id='tbodyQ' >
