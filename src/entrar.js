@@ -4,7 +4,6 @@ import { BrowserRouter, Route, Switch, Redirect, Link } from "react-router-dom";
 import { confirmAlert } from "react-confirm-alert"; // Import
 import "react-confirm-alert/src/react-confirm-alert.css"; 
 import cookie from "react-cookies";
-import logo from './logo.svg';
 
 
 export default class entrar extends React.Component {
@@ -41,6 +40,15 @@ export default class entrar extends React.Component {
         this.idUsuario.current.value,
         this.pass.current.value
       );
+    }
+
+    entrarKey = (e) => {
+      if(e.which===13){ 
+        this.comprobarU(
+          this.idUsuario.current.value,
+          this.pass.current.value
+        );
+     }
     }
 
     comprobarU = async (idUsuario, pass) => {
@@ -139,10 +147,7 @@ export default class entrar extends React.Component {
         <>
           <Helmet>
             <title>Seguridad Social</title>
-            <meta
-              name="description"
-              content="Helmet application"
-            />
+            <meta name="description" content="Helmet application" />
           </Helmet>
           <div className="App">
             <header className="App-header">
@@ -160,19 +165,25 @@ export default class entrar extends React.Component {
                   <table style={{ width: "100%" }}>
                     <tbody>
                       <tr>
-                        <td style={{ textAlign: "left" }}>
-                          N° de empleado:
-                        </td>
+                        <td className="login loginM">N° de empleado:</td>
                         <td>
-                          <input ref={this.idUsuario} type="number" />
+                          <input
+                            ref={this.idUsuario}
+                            onKeyUp={this.entrarKey}
+                            className="form-control"
+                            type="number"
+                          />
                         </td>
                       </tr>
                       <tr>
-                        <td style={{ textAlign: "left" }}>
-                          Contraseña:
-                        </td>
+                        <td style={{ textAlign: "left" }}>Contraseña:</td>
                         <td>
-                          <input ref={this.pass} type="password" />
+                          <input
+                            ref={this.pass}
+                            onKeyUp={this.entrarKey}
+                            className="form-control"
+                            type="password"
+                          />
                         </td>
                       </tr>
                     </tbody>
@@ -195,10 +206,7 @@ export default class entrar extends React.Component {
                       justifyContent: "flex-end"
                     }}
                   >
-                    <button
-                      className="btn btn-success"
-                      onClick={this.entrar}
-                    >
+                    <button className="btn btn-success" onClick={this.entrar}>
                       ENTRAR
                     </button>
                   </div>
@@ -211,16 +219,12 @@ export default class entrar extends React.Component {
                     }}
                   >
                     <Link to="/registro" className="link">
-                      <button
-                        to="/registro"
-                        className="btn btn-primary"
-                      >
+                      <button to="/registro" className="btn btn-primary">
                         REGISTRO
                       </button>
                     </Link>
                   </div>
                 </div>
-                
               </div>
             </header>
           </div>

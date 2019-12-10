@@ -823,6 +823,42 @@ pre code {
   margin-left: 91.666667%;
 }
 
+@media (min-width: 0px) {
+  .wuserM {
+    width: 60px;
+  }
+
+  .loginM {
+    width: 140px;
+    text-align: left;
+  }
+
+  .passCM {
+    width: 170px;
+  }
+
+  .wuserTM {
+    width: 0px;
+    opacity: 0;
+  }
+}
+
+@media (min-width: 800px) {
+  .wuser {
+    width: auto;
+  }
+
+  .login {
+    width: auto;
+    text-align: left;
+  }
+
+  .wuserT {
+    width: auto;
+    opacity: 1;
+  }
+}
+
 @media (min-width: 576px) {
   .col-sm {
     -ms-flex-preferred-size: 0;
@@ -8427,7 +8463,7 @@ button.bg-dark:focus {
   }
   .mr-sm-3,
   .mx-sm-3 {
-    margin-right: 1rem !important;
+    margin-right: 0rem !important;
   }
   .mb-sm-3,
   .my-sm-3 {

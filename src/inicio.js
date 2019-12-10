@@ -54,12 +54,12 @@ export default class entrar extends React.Component {
   }
 
   removeCookies(){
-    cookie.remove("idUsuario");
-    cookie.remove("nombre");
-    cookie.remove("correo");
-    cookie.remove("edad");
-    cookie.remove("idRol");
-    cookie.remove("pass");
+    cookie.remove("idUsuario", { path: "/" });
+    cookie.remove("nombre", { path: "/" });
+    cookie.remove("correo", { path: "/" });
+    cookie.remove("edad", { path: "/" });
+    cookie.remove("idRol", { path: "/" });
+    cookie.remove("pass", { path: "/" });
   }
   
   obtenerD = async (e) => {
@@ -323,11 +323,13 @@ export default class entrar extends React.Component {
                 const children = document.createElement("a")
                 const dropDiv = document.createElement('div')
                 tUserB.classList.add('dropdown-toggle')
+                tUserB.setAttribute('data-toggle','dropdown')
                 dropDiv.className = 'dropdown-menu'
                 children.innerHTML = 'Administrador'
                 children.className = 'dropdown-item'
                 children.id = 'Administrador'
-                children.href = '/inicioAdmin'
+               // children.href = '/inicioAdmin'
+                children.onmouseup = () => { this.props.history.push("/inicioAdmin"); }
                 dropDiv.appendChild(children)
                 tUser.appendChild(dropDiv)
               }
@@ -418,18 +420,20 @@ export default class entrar extends React.Component {
                         width: '100%'
                       }}
                     >
-                      <h1 > BIENVENIDO AL SISTEMA </h1>
+                      <br />
+                      <h1 > BIENVENIDO </h1>
                       <div
                         style={{
                           position: 'absolute',
                           left: 5,
-                          top: 25
+                          top: 5
                         }}
                       >
-                        <img src={userI} width='30' height='30' />
-                        {' '}<div id='tUser' className="dropdown" style={{display: 'inline-block'}} >
-                          <button id='tUserB' type="button" className="btn btn-primary" data-toggle="dropdown">
-                            Usuario
+                        
+                        <div id='tUser' className="dropdown" style={{display: 'inline-block'}} >
+                          <button id='tUserB' type="button" className="btn btn-primary wuser wuserM ">
+                           <img src={userI} width='25' height='25' /> 
+                           <div className='wuserT wuserTM' style={{display: 'inline-block'}} >Usuario</div>
                           </button>
                         </div> 
 
@@ -442,7 +446,7 @@ export default class entrar extends React.Component {
                           alignItems: "flex-start",
                           justifyContent: "flex-end",
                           right: 5,
-                          top: 25
+                          top: 5
                         }}
                       >
                         <button className="btn btn-danger" onClick={this.salir}>
@@ -452,14 +456,14 @@ export default class entrar extends React.Component {
                     </div>
                     
                     <div>
-                    <table className="table table-borderless table-dark" style={{textAlign: 'left'}} >
+                    <table className="table table-borderless table-dark" style={{textAlign: 'left', borderRadius: 5}} >
                       <tbody>
                         <tr>
                           <th scope="row">N° de empleado:</th>
-                          <td>{idUsuario}</td>
+                          <td style={{verticalAlign: 'middle'}} >{idUsuario}</td>
                         </tr>
                         <tr>
-                          <th scope="row">Nombre:</th>
+                          <th style={{ verticalAlign: 'middle'}} scope="row">Usuario:</th>
                           <td>{nombre}</td>
                         </tr>
                         <tr>
@@ -467,8 +471,7 @@ export default class entrar extends React.Component {
                           <td>{correo}</td>
                         </tr>
                         <tr>
-                          <th scope="row"></th>
-                          <td>
+                          <td colSpan='2' style={{textAlign: 'center'}} >
                             <button id='editar' onClick = {this.editar} className="btn btn-info" >
                               {`Editar`}
                             </button>
@@ -546,7 +549,7 @@ export default class entrar extends React.Component {
                     </div>
 
                     <br/>
-                    <div>
+                    <div className='table-responsive' >
 
                        <table className="table table-bordered table-dark">
                         <thead>

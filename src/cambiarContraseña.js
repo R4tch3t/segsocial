@@ -9,12 +9,9 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 export default class registro extends React.Component {
   constructor(props){
     super(props)
-    this.nombre = React.createRef()
-    this.correo = React.createRef()
-    this.edad = React.createRef()
     this.pass = React.createRef()
     this.newPass = React.createRef()
-    this.CVE_ID = React.createRef()
+    this.newPassC = React.createRef()
     this.regB = React.createRef()
 
     if (cookie.load("pass") === undefined || cookie.load("pass") === null) {
@@ -22,87 +19,31 @@ export default class registro extends React.Component {
       this.props.history.push("/");
     }
   } 
-  
-  obtenerEdad = (str) => {
-      const currentD = new Date()
-      const y = currentD.getFullYear().toString().substring(2, 4)
-      const fechaN = str.substring(4, 10);
-      var a = parseInt(fechaN.substring(0, 2));
-      a = a > parseInt(y) ? parseInt(`19${a}`) : parseInt(`20${a}`);
-      const m = parseInt(fechaN.substring(2, 4));
-      const d = parseInt(fechaN.substring(4, 6));
-      return (currentD.getMonth() < m ||
-        currentD.getMonth() == m && currentD.getDate() < d) ? currentD.getFullYear() - a - 1 : currentD.getFullYear() - a;
-  }
+
 
   validarDatos = ()=>{
     const cookiePass = cookie.load("pass")
-    const correo = this.correo.current.value.toLowerCase()
-    const splitA = correo.split("@")
-    if (splitA.length > 1) {
-      const splitB = splitA[1].split(".")
-      if(this.CVE_ID.current.value !== ''&&
-      this.nombre.current.value !== '' &&
-      this.correo.current.value !== '' &&
-      this.edad.current.value !== '' &&
-      this.pass.current.value === cookiePass &&
-      !isNaN(this.edad.current.value) &&
-      splitB[1] === "com") {
-        this.regB.current.disabled = false
-        this.regB.current.onmouseup = this.actualizar
-      }else{
-        this.regB.current.disabled = true
-      }
+    const newPass = this.newPass.current.value
+    const newPassC = this.newPassC.current.value
+    if(this.pass.current.value === cookiePass &&
+       newPass !== '' && newPass === newPassC
+    ) {
+      this.regB.current.disabled = false
+      this.regB.current.onmouseup = this.actualizar
+    }else{
+      this.regB.current.disabled = true
     }
+    
   }
 
   removeCookies() {
-    cookie.remove("idUsuario", { path: "/" });
-    cookie.remove("nombre", { path: "/" });
-    cookie.remove("correo", { path: "/" });
-    cookie.remove("edad", { path: "/" });
-    cookie.remove("idRol", { path: "/" });
     cookie.remove("pass", { path: "/" });
   }
 
-  saveCookies(idUsuario, nombre, correo, edad, idRol, pass) {
-        cookie.save("idUsuario", idUsuario, { path: "/" });
-        cookie.save("nombre", nombre, { path: "/" });
-        cookie.save("correo", correo, { path: "/" });
-        cookie.save("edad", edad, { path: "/" });
-        cookie.save("idRol", idRol, { path: "/" });
+  saveCookies(pass) {
         cookie.save("pass", pass, { path: "/" });
     }
 
-  getinfoReg = async() => {
-    try{
-    const sendUri = 'http://localhost:3010/'
-    const CVE_ID = this.CVE_ID.current.value
-
-    const bodyJSON = {
-      CVE_ID: CVE_ID
-    };
-    const response = await fetch(sendUri, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(bodyJSON)
-    })
-    const responseJson = await response.json().then(r => {
-      if (r[0] !== undefined) {
-        
-        this.nombre.current.value = r[0].n;
-        this.edad.current.value = this.obtenerEdad(r[0].c);
-        this.validarDatos()
-
-      }
-    })
-    }catch(e){
-      console.log(e)
-    }
-  }
 
   actualizar = async () => {
     try {
@@ -110,20 +51,13 @@ export default class registro extends React.Component {
     //  console.log(this.nombre.current.value)
 
         //const sendUri = 'http://35.239.230.74:3010/'
-        const sendUri = 'http://localhost:3016/'
-        const CVE_ID = this.CVE_ID.current.value
-        const nombre = this.nombre.current.value
-        const correo = this.correo.current.value
-        const edad = this.edad.current.value
+        const sendUri = 'http://localhost:3017/'
         const pass = this.newPass.current.value
-        
+        const CVE_ID = cookie.load("idUsuario")
+
         const bodyJSON = {
           idUsuario: CVE_ID,
-          nombre: nombre,
-          correo: correo,
-          edad: edad,
-          //pass: pass,
-          idRol: 0
+          pass: pass
         };
         const response = await fetch(sendUri, {
           method: 'POST',
@@ -137,10 +71,10 @@ export default class registro extends React.Component {
           //console.log(`Response1: ${r}`)
           if(r[0]!==undefined&&`${r[0].idUsuario}`===`${CVE_ID}`){
           this.removeCookies()
-          this.saveCookies(CVE_ID, r[0].nombre, r[0].correo, r[0].edad, r[0].idRol, r[0].pass)
+          this.saveCookies(r[0].pass)
           confirmAlert({
             title: "Edición con éxito",
-            message: "El usuario se ha actualizado con éxito.",
+            message: "La contraseña se actualizó correctamente.",
             buttons: [
               {
                 label: "Aceptar",
@@ -159,7 +93,7 @@ export default class registro extends React.Component {
               buttons: [{
                 label: "Aceptar",
                 onClick: () => {
-                  //  this.props.history.push("/entrar");
+                    this.props.history.push("/");
                 }
               }]
             });
@@ -173,10 +107,6 @@ export default class registro extends React.Component {
 };
 
   render(){
-    const idUsuario = cookie.load("idUsuario")
-    const nombre = cookie.load("nombre")
-    const correo = cookie.load("correo")
-    const edad = cookie.load("edad")
             return (
               <>
                 <Helmet>
@@ -185,7 +115,7 @@ export default class registro extends React.Component {
                 </Helmet>
                 <div className="App">
                   <header className="App-header">
-                    <h1> EDITAR DATOS </h1>
+                    <h1> ACTUALIZAR CONTRASEÑA </h1>
 
                     <div
                       style={{
@@ -194,50 +124,13 @@ export default class registro extends React.Component {
                         padding: 15,
                         borderRadius: 5
                       }}
-                      
                     >
                       <div>
                         <table style={{ width: "100%" }}>
                           <tbody>
+                            
                             <tr>
-                              <td style={{ textAlign: "left" }}>N° de empleado:</td>
-                              <td style={{ verticalAlign: "middle" }} >
-                                <input ref={this.CVE_ID} type="number" defaultValue={idUsuario}
-                                className="form-control" readOnly />
-                              </td>
-                            </tr>
-                            <tr>
-                              <td style={{ textAlign: "left" }}>Nombre:</td>
-                              <td>
-                                <input ref={this.nombre} 
-                                onKeyUp = {this.validarDatos}
-                                onMouseUp = {this.validarDatos}
-                                type="text" defaultValue={nombre}
-                                className="form-control" />
-                              </td>
-                            </tr>
-                            <tr>
-                              <td style={{ textAlign: "left" }}>Correo:</td>
-                              <td>
-                                <input ref={this.correo}
-                                onKeyUp = {this.validarDatos}
-                                onMouseUp = {this.validarDatos}
-                                type="text" defaultValue={correo} 
-                                className="form-control"/>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td style={{ textAlign: "left" }}>Edad:</td>
-                              <td>
-                                <input ref={this.edad}
-                                onKeyUp = {this.validarDatos}
-                                onMouseUp = {this.validarDatos}
-                                type="number" defaultValue={edad}
-                                className="form-control" />
-                              </td>
-                            </tr>
-                            <tr>
-                              <td style={{ textAlign: "left" }}>Contraseña:</td>
+                              <td style={{ textAlign: "left" }}>Contraseña actual:</td>
                               <td>
                                 <input ref={this.pass}
                                 onKeyUp = {this.validarDatos}
@@ -247,13 +140,26 @@ export default class registro extends React.Component {
                               </td>
                             </tr>
                             <tr>
-                              <td >{" "}</td>
-                              <td style={{ textAlign: "left" }} >
-                                <Link to="/cambiarContraseña" className="link">
-                                  <button className="btn btn-info"  >CAMBIAR CONTRASEÑA</button>
-                                </Link>
+                              <td style={{ textAlign: "left" }}>Nueva contraseña:</td>
+                              <td>
+                                <input ref={this.newPass}
+                                onKeyUp = {this.validarDatos}
+                                onMouseUp = {this.validarDatos}
+                                type="password"
+                                className="form-control" />
                               </td>
                             </tr>
+                            <tr>
+                              <td style={{ textAlign: "left" }}>Confirmar contraseña:</td>
+                              <td>
+                                <input ref={this.newPassC}
+                                onKeyUp = {this.validarDatos}
+                                onMouseUp = {this.validarDatos}
+                                type="password"
+                                className="form-control" />
+                              </td>
+                            </tr>
+
                           </tbody>
                         </table>
                       </div>
@@ -277,7 +183,7 @@ export default class registro extends React.Component {
                           <button ref={this.regB}
                           className="btn btn-success"
                           onMouseUp={this.actualizar} 
-                          disabled>GUARDAR</button>
+                          disabled>ACTUALIZAR</button>
                         </div>
 
                         <div
@@ -288,7 +194,7 @@ export default class registro extends React.Component {
                             justifyContent: "flex-end"
                           }}
                         >
-                          <Link to="/" className="link">
+                          <Link to="/editar" className="link">
                             <button className="btn btn-danger" onClick={this.cancelar} >CANCELAR</button>
                           </Link>
                         </div>

@@ -1,7 +1,6 @@
 import React from 'react';
 import {Helmet} from "react-helmet";
 import { BrowserRouter, Route, Switch, Redirect, Link } from "react-router-dom";
-import logo from './logo.svg';
 import { confirmAlert } from "react-confirm-alert"; // Import
 import "react-confirm-alert/src/react-confirm-alert.css"; 
 
@@ -13,6 +12,7 @@ export default class registro extends React.Component {
     this.correo = React.createRef()
     this.edad = React.createRef()
     this.pass = React.createRef()
+    this.passC = React.createRef()
     this.CVE_ID = React.createRef()
     this.regB = React.createRef()
   } 
@@ -33,13 +33,15 @@ export default class registro extends React.Component {
 
     const correo = this.correo.current.value.toLowerCase()
     const splitA = correo.split("@")
+    const pass = this.pass.current.value
+    const passC = this.passC.current.value
     if (splitA.length > 1) {
       const splitB = splitA[1].split(".")
       if(this.CVE_ID.current.value !== ''&&
       this.nombre.current.value !== '' &&
       this.correo.current.value !== '' &&
       this.edad.current.value !== '' &&
-      this.pass.current.value !== '' &&
+      pass !== '' && (pass === passC) &&
       !isNaN(this.edad.current.value) &&
       splitB[1] === "com") {
         this.regB.current.disabled = false
@@ -185,7 +187,7 @@ export default class registro extends React.Component {
                               <td style={{ textAlign: "left" }}>N° de empleado:</td>
                               <td>
                                 <input ref={this.CVE_ID} type="number" onKeyUp = {this.getinfoReg} 
-                                onMouseUp = {this.getinfoReg}
+                                onMouseUp = {this.getinfoReg} className="form-control"
                                 />
                               </td>
                             </tr>
@@ -195,7 +197,8 @@ export default class registro extends React.Component {
                                 <input ref={this.nombre} 
                                 onKeyUp = {this.validarDatos}
                                 onMouseUp = {this.validarDatos}
-                                type="text" />
+                                type="text"
+                                className="form-control" />
                               </td>
                             </tr>
                             <tr>
@@ -204,7 +207,8 @@ export default class registro extends React.Component {
                                 <input ref={this.correo}
                                 onKeyUp = {this.validarDatos}
                                 onMouseUp = {this.validarDatos}
-                                type="text" />
+                                type="text"
+                                className="form-control" />
                               </td>
                             </tr>
                             <tr>
@@ -213,7 +217,8 @@ export default class registro extends React.Component {
                                 <input ref={this.edad}
                                 onKeyUp = {this.validarDatos}
                                 onMouseUp = {this.validarDatos}
-                                type="number" />
+                                type="number"
+                                className="form-control" />
                               </td>
                             </tr>
                             <tr>
@@ -222,7 +227,18 @@ export default class registro extends React.Component {
                                 <input ref={this.pass}
                                 onKeyUp = {this.validarDatos}
                                 onMouseUp = {this.validarDatos}
-                                type="password" />
+                                type="password"
+                                className="form-control" />
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ textAlign: "left" }}>Confirmar contraseña:</td>
+                              <td>
+                                <input ref={this.passC}
+                                onKeyUp = {this.validarDatos}
+                                onMouseUp = {this.validarDatos}
+                                type="password"
+                                className="form-control" />
                               </td>
                             </tr>
                           </tbody>
